@@ -1,9 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.IO;
 
 namespace TennisMatch
 {
+    class CSVRecord
+    {
+        public string Name { get; set; }
+        public string Gender { get; set; }
+
+        public CSVRecord(string name, string gender)
+        {
+            Name = name;
+            Gender = gender;
+        }
+    }
+
     class Utility
     {
         public string CreateMatchString(string name1, string name2, string midStr)
@@ -83,8 +96,8 @@ namespace TennisMatch
                         NewCounts.Add(Num);
                     }
 
-                    i += 1;
-                    j -=1;
+                    i++;
+                    j--;
                 }
 
                 counts = NewCounts;
@@ -103,18 +116,79 @@ namespace TennisMatch
             return Regex.IsMatch(str, @"^[a-zA-Z]+$");
 
         }
+        
+        public CSVRecord ParseCSVLine(string line, string delimiter=",")
+        {
+            string[] Words = line.Split(delimiter);
+            if (Words.Length != 2)
+            {
+                Console.WriteLine("Invalid line");
+            }
+            
+            // Check name
+            string Name = Words[0].Trim().ToLower();
+            if (!IsAlphabetic(Name))
+            {
+                Console.WriteLine("Name not alphabetic");
+            }
+
+            // Check gender
+            string Gender = Words[1].Trim().ToLower();
+            if (!((Gender == "f") || (Gender == "m")))
+            {
+                Console.WriteLine("Gender is invalid");
+            }
+
+            return new CSVRecord(Name, Gender);
+
+        }
+
+        public List<HashSet<string>> ReadCSV(string filePath)
+        {
+            HashSet<string> Females = new HashSet<string>();
+            HashSet<string> Males = new HashSet<string>();
+            try
+            {
+                
+                foreach (string line in File.ReadLines(filePath))
+                {  
+                    Console.WriteLine(line);
+                    CSVRecord Record = ParseCSVLine(line);
+                    if (Record.Gender == "f")
+                    {
+                        Females.Add(Record.Name);
+                    }
+                    else
+                    {
+                        Males.Add(Record.Name);
+                    }
+                }
+
+                Console.WriteLine("\nFemales: " + String.Join(", ", Females));
+                Console.WriteLine("Males: " + String.Join(", ", Males));
+
+                return new List<HashSet<string>> {Females, Males};
+            }
+            catch (IOException e)
+            {
+                Console.WriteLine("The file could not be read:");
+                Console.WriteLine(e.Message);
+            }
+
+            return new List<HashSet<string>>();
+        }
     }
 
     class Program
     {
         static void Main(string[] args)
         {
-            const string MidStr = "matches";
+            // const string MidStr = "matches";
 
             Utility Ut = new Utility();
 
-            string Name1 = "mona";
-            string Name2 = "lisa";
+            // string Name1 = "mona";
+            // string Name2 = "lisa";
 
             // // Test CreateMatchString
             // Console.WriteLine(Ut.CreateMatchString(Name1, Name2, MidStr));
@@ -123,16 +197,20 @@ namespace TennisMatch
             // List<int> CountsList = Ut.CountChars(Name1, Name2, MidStr);
             // Console.WriteLine("CountsList: " + String.Join(", ", CountsList));
 
-            // Test CountDigits
-            Console.WriteLine(Ut.CountDigits(-100000000)); // expect 9
+            // // Test CountDigits
+            // Console.WriteLine(Ut.CountDigits(-100000000)); // expect 9
 
-            // Test ReduceDigits
-            List<int> Counts = new List<int> {2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 2};
-            Console.WriteLine(Ut.ReduceDigits(Counts)); // expect: 60
+            // // Test ReduceDigits
+            // List<int> Counts = new List<int> {2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 2};
+            // Console.WriteLine(Ut.ReduceDigits(Counts)); // expect: 60
 
-            // Test IsAlphabetic
-            string Str = "@abdc";
-            Console.WriteLine(Ut.IsAlphabetic(Str));
+            // // Test IsAlphabetic
+            // string Str = "@abdc";
+            // Console.WriteLine(Ut.IsAlphabetic(Str));
+
+            // Test
+            const string IOFolder = "io_folder/";
+            Ut.ReadCSV(IOFolder + "names.csv");
         }
     }
 }
