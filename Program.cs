@@ -27,8 +27,8 @@ namespace TennisMatch
 
         public Match(string name1, string name2, int score=0)
         {
-            Name1 = name1;
-            Name2 = name2;
+            Name1 = name1.ToLower().Trim();
+            Name2 = name2.ToLower().Trim();
             Score = score;
             MidStr = "matches";
             MinGoodScore = 80;
@@ -56,14 +56,6 @@ namespace TennisMatch
 
         public override string ToString() => this.GetFinalMatchString();
     
-        // public override string ToString()
-        // {
-        //     return String.Format(
-        //         "({0}, {1}, {2})", 
-        //         Name1, Name2, Score
-        //     );
-        // }
-    
         int IComparable.CompareTo(object obj)
         {
             Match Other = (Match) obj;
@@ -79,23 +71,14 @@ namespace TennisMatch
 
     class Utility<T>
     {
-        public string CreateMatchString(string name1, string name2, string midStr)
+        public List<int> CountChars(string str)
         {
-            return name1 + midStr + name2;
-        }
-
-        public List<int> CountChars(string name1, string name2, string midStr)
-        {
-            name1 = name1.ToLower().Trim();
-            name2 = name2.ToLower().Trim();
-
             List<int> CountsList = new List<int>();
 
             Dictionary<char, int> CharsDict = 
                 new Dictionary<char, int>();
             
-            string Str = CreateMatchString(name1, name2, midStr);
-            foreach (char c in Str)
+            foreach (char c in str)
             {
                 if (CharsDict.ContainsKey(c))
                 {
@@ -108,7 +91,7 @@ namespace TennisMatch
             }
 
             HashSet<char> SeenChars = new HashSet<char>();
-            foreach (char c in Str)
+            foreach (char c in str)
             {
                 if (!SeenChars.Contains(c))
                 {
@@ -234,19 +217,19 @@ namespace TennisMatch
             return new List<HashSet<string>>();
         }
         
-        public List<Match> MatchUp(HashSet<string> nameList1, HashSet<string> nameList2)
+        public List<string[]> CrossStringLists(HashSet<string> nameList1, HashSet<string> nameList2)
         {
-            List<Match> Matches = new List<Match>();
+            List<string[]> Products = new List<string[]>();
 
             foreach (string name1 in nameList1)
             {
                 foreach (string name2 in nameList2)
                 {
-                    Matches.Add(new Match(name1, name2));
+                    Products.Add(new string[] { name1, name2 });
                 }
             }
 
-            return Matches;
+            return Products;
         }
     
         public void SaveListToFile(string filename, List<T> itemList)
@@ -271,15 +254,16 @@ namespace TennisMatch
 
             string Name1 = "mona";
             string Name2 = "lisa";
+            Match MatchObj = new Match(Name1, Name2);
 
             // Test CreateMatchString
             Console.WriteLine("Test CreateMatchString:");
-            Console.WriteLine(Ut.CreateMatchString(Name1, Name2, MidStr));
+            Console.WriteLine(MatchObj.GetMatchString());
             Console.WriteLine();
 
             // Test CountMatchChars
             Console.WriteLine("Test CountMatchChars:");
-            List<int> CountsList = Ut.CountChars(Name1, Name2, MidStr);
+            List<int> CountsList = Ut.CountChars(MatchObj.GetMatchString());
             Console.WriteLine("CountsList: " + String.Join(", ", CountsList));
             Console.WriteLine();
 
@@ -310,8 +294,9 @@ namespace TennisMatch
 
             // Test MatchUp
             Console.WriteLine("Test MatchUp:");
-            List<Match> Matches = Ut.MatchUp(AllNames[0], AllNames[1]);
-            Console.WriteLine("Matches: " + String.Join(", ", Matches));
+            List<string[]> Products = 
+                Ut.CrossStringLists(AllNames[0], AllNames[1]);
+            Console.WriteLine("Matches: " + String.Join(", ", Products));
             Console.WriteLine();
         }
     }
@@ -336,23 +321,27 @@ namespace TennisMatch
             // Read Females and Males sets from csv file
             List<HashSet<string>> AllNames = Ut.ReadCSV(InpFileName);
 
-            // Match-up the Females and Males sets
-            List<Match> Matches = Ut.MatchUp(AllNames[0], AllNames[1]);
+            // Cross-product the Females and Males sets
+            List<string[]> Products = 
+                Ut.CrossStringLists(AllNames[0], AllNames[1]);
 
-            // Calculate and store each match's score
-            foreach (Match MatchObj in Matches)
+            // Create and store matches along with their scores
+            List<Match> Matches = new List<Match>();
+            foreach (string[] Product in Products)
             {
+                Match MatchObj = new Match(Product[0], Product[1]);
+
                 List<int> Counts = Ut.CountChars(
-                    MatchObj.Name1, MatchObj.Name2, MidStr
+                    MatchObj.GetMatchString()
                 );
+
                 MatchObj.Score = Ut.ReduceDigits(Counts);
+
+                Matches.Add(MatchObj);
             }
-            // Matches.Add(new Match("ace", "billy", 95));
-            Console.WriteLine("Matches: " + String.Join(", ", Matches));
             
             // Sort Matches
             Matches.Sort();
-            Console.WriteLine("Matches: " + String.Join(", ", Matches));
 
             // Save Matches to text file
             Ut.SaveListToFile(OutFileName, Matches);
