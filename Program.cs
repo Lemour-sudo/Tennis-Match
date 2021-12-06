@@ -190,44 +190,73 @@ namespace TennisMatch
         }
     }
 
+    class Test
+    {
+        public void RunLocalTests()
+        {
+            const string MidStr = "matches";
+
+            Utility Ut = new Utility();
+
+            string Name1 = "mona";
+            string Name2 = "lisa";
+
+            // Test CreateMatchString
+            Console.WriteLine("Test CreateMatchString:");
+            Console.WriteLine(Ut.CreateMatchString(Name1, Name2, MidStr));
+            Console.WriteLine();
+
+            // Test CountMatchChars
+            Console.WriteLine("Test CountMatchChars:");
+            List<int> CountsList = Ut.CountChars(Name1, Name2, MidStr);
+            Console.WriteLine("CountsList: " + String.Join(", ", CountsList));
+            Console.WriteLine();
+
+            // Test CountDigits
+            Console.WriteLine("Test CountDigits:");
+            Console.WriteLine(Ut.CountDigits(-100000000)); // expect 9
+            Console.WriteLine();
+
+            // Test ReduceDigits
+            Console.WriteLine("Test ReduceDigits:");
+            List<int> Counts = new List<int> {2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 2};
+            Console.WriteLine(Ut.ReduceDigits(Counts)); // expect: 60
+            Console.WriteLine();
+
+            // Test IsAlphabetic
+            Console.WriteLine("Test IsAlphabetic:");
+            string Str = "@abdc";
+            Console.WriteLine(Ut.IsAlphabetic(Str));
+            Console.WriteLine();
+
+            // Test ReadCSV
+            Console.WriteLine("Test ReadCSV:");
+            const string IOFolder = "io_folder/";
+            List<HashSet<string>> AllNames = Ut.ReadCSV(IOFolder + "names.csv");
+            Console.WriteLine("Females: " + String.Join(", ", AllNames[0]));
+            Console.WriteLine("Males: " + String.Join(", ", AllNames[1]));
+            Console.WriteLine();
+
+            // Test MatchUp
+            Console.WriteLine("Test MatchUp:");
+            List<(string, string)> Matches = Ut.MatchUp(AllNames[0], AllNames[1]);
+            Console.WriteLine("Matches: " + String.Join(", ", Matches));
+            Console.WriteLine();
+        }
+    }
+
     class Program
     {
         static void Main(string[] args)
         {
-            // const string MidStr = "matches";
+            const string MidStr = "matches";
 
             Utility Ut = new Utility();
 
-            // string Name1 = "mona";
-            // string Name2 = "lisa";
+            // // Run local tests
+            // Test TestC = new Test();
+            // TestC.RunLocalTests();
 
-            // // Test CreateMatchString
-            // Console.WriteLine(Ut.CreateMatchString(Name1, Name2, MidStr));
-
-            // // Test CountMatchChars
-            // List<int> CountsList = Ut.CountChars(Name1, Name2, MidStr);
-            // Console.WriteLine("CountsList: " + String.Join(", ", CountsList));
-
-            // // Test CountDigits
-            // Console.WriteLine(Ut.CountDigits(-100000000)); // expect 9
-
-            // // Test ReduceDigits
-            // List<int> Counts = new List<int> {2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 2};
-            // Console.WriteLine(Ut.ReduceDigits(Counts)); // expect: 60
-
-            // // Test IsAlphabetic
-            // string Str = "@abdc";
-            // Console.WriteLine(Ut.IsAlphabetic(Str));
-
-            // // Test ReadCSV
-            // const string IOFolder = "io_folder/";
-            // List<HashSet<string>> AllNames = Ut.ReadCSV(IOFolder + "names.csv");
-            // Console.WriteLine("Females: " + String.Join(", ", AllNames[0]));
-            // Console.WriteLine("Males: " + String.Join(", ", AllNames[1]));
-
-            // // Test MatchUp
-            // List<(string, string)> Matches = Ut.MatchUp(AllNames[0], AllNames[1]);
-            // Console.WriteLine("Matches: " + String.Join(", ", Matches));
         }
     }
 }
