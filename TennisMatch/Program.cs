@@ -314,7 +314,7 @@ namespace TennisMatch
             // Test TestC = new Test();
             // TestC.RunLocalTests();
 
-            const string IOFolder = "io_folder/";
+            const string IOFolder = "../IOFolder/";
             const string InpFileName = IOFolder + "names_1.csv";
             const string OutFileName = IOFolder + "output_1.txt";
 
