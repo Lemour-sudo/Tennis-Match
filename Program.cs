@@ -23,6 +23,7 @@ namespace TennisMatch
         public string Name1 { get; set; }
         public string Name2 { get; set; }
         public int Score { get; set; }
+        public int MinGoodScore { get; set; }
 
         public Match(string name1, string name2, int score=0)
         {
@@ -30,6 +31,7 @@ namespace TennisMatch
             Name2 = name2;
             Score = score;
             MidStr = "matches";
+            MinGoodScore = 80;
         }
 
         public string GetMatchString()
@@ -37,14 +39,14 @@ namespace TennisMatch
             return Name1 + MidStr + Name2;
         }
 
-        public string GetFinalMatchString(int cutoff)
+        public string GetFinalMatchString()
         {
             string Result = String.Format(
-                "{0} {1} {2}",
-                Name1, MidStr, Name2
+                "{0} {1} {2} {3}%",
+                Name1, MidStr, Name2, Score
             );
 
-            if (Score >= cutoff)
+            if (Score >= MinGoodScore)
             {
                 Result += ", good match";
             }
@@ -52,13 +54,15 @@ namespace TennisMatch
             return Result;
         }
 
-        public override string ToString()
-        {
-            return String.Format(
-                "({0}, {1}, {2})", 
-                Name1, Name2, Score
-            );
-        }
+        public override string ToString() => this.GetFinalMatchString();
+    
+        // public override string ToString()
+        // {
+        //     return String.Format(
+        //         "({0}, {1}, {2})", 
+        //         Name1, Name2, Score
+        //     );
+        // }
     
         int IComparable.CompareTo(object obj)
         {
@@ -73,7 +77,7 @@ namespace TennisMatch
         }
     }
 
-    class Utility
+    class Utility<T>
     {
         public string CreateMatchString(string name1, string name2, string midStr)
         {
@@ -244,6 +248,17 @@ namespace TennisMatch
 
             return Matches;
         }
+    
+        public void SaveListToFile(string filename, List<T> itemList)
+        {
+            using(TextWriter tw = new StreamWriter(filename))
+            {
+                foreach (T item in itemList)
+                {
+                    tw.WriteLine(item.ToString());
+                }
+            }
+        }
     }
 
     class Test
@@ -252,7 +267,7 @@ namespace TennisMatch
         {
             const string MidStr = "matches";
 
-            Utility Ut = new Utility();
+            Utility<Match> Ut = new Utility<Match>();
 
             string Name1 = "mona";
             string Name2 = "lisa";
@@ -306,8 +321,9 @@ namespace TennisMatch
         static void Main(string[] args)
         {
             const string MidStr = "matches";
+            const int MinGoodScore = 80;     // Minimum good match score
 
-            Utility Ut = new Utility();
+            Utility<Match> Ut = new Utility<Match>();
 
             // // Run local tests
             // Test TestC = new Test();
@@ -315,7 +331,7 @@ namespace TennisMatch
 
             const string IOFolder = "io_folder/";
             const string InpFileName = IOFolder + "names_1.csv";
-            const string OutFileName = IOFolder + "output_2.txt";
+            const string OutFileName = IOFolder + "output_1.txt";
 
             // Read Females and Males sets from csv file
             List<HashSet<string>> AllNames = Ut.ReadCSV(InpFileName);
@@ -331,12 +347,15 @@ namespace TennisMatch
                 );
                 MatchObj.Score = Ut.ReduceDigits(Counts);
             }
-            Matches.Add(new Match("ace", "billy", 95));
+            // Matches.Add(new Match("ace", "billy", 95));
             Console.WriteLine("Matches: " + String.Join(", ", Matches));
             
             // Sort Matches
             Matches.Sort();
             Console.WriteLine("Matches: " + String.Join(", ", Matches));
+
+            // Save Matches to text file
+            Ut.SaveListToFile(OutFileName, Matches);
         }
     }
 }
