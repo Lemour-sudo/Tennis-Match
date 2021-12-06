@@ -17,6 +17,50 @@ namespace TennisMatch
         }
     }
 
+    class Match
+    {
+        public static string MidStr { get; set; }
+        public string Name1 { get; set; }
+        public string Name2 { get; set; }
+        public int Score { get; set; }
+
+        public Match(string name1, string name2, int score=0)
+        {
+            Name1 = name1;
+            Name2 = name2;
+            Score = score;
+            MidStr = "matches";
+        }
+
+        public string GetMatchString()
+        {
+            return Name1 + MidStr + Name2;
+        }
+
+        public string GetFinalMatchString(int cutoff)
+        {
+            string Result = String.Format(
+                "{0} {1} {2}",
+                Name1, MidStr, Name2
+            );
+
+            if (Score >= cutoff)
+            {
+                Result += ", good match";
+            }
+
+            return Result;
+        }
+
+        public override string ToString()
+        {
+            return String.Format(
+                "({0}, {1}, {2})", 
+                Name1, Name2, Score
+            );
+        }
+    }
+
     class Utility
     {
         public string CreateMatchString(string name1, string name2, string midStr)
@@ -174,15 +218,15 @@ namespace TennisMatch
             return new List<HashSet<string>>();
         }
         
-        public List<(string, string)> MatchUp(HashSet<string> nameList1, HashSet<string> nameList2)
+        public List<Match> MatchUp(HashSet<string> nameList1, HashSet<string> nameList2)
         {
-            List<(string, string)> Matches = new List<(string, string)>();
+            List<Match> Matches = new List<Match>();
 
             foreach (string name1 in nameList1)
             {
                 foreach (string name2 in nameList2)
                 {
-                    Matches.Add((name1, name2));
+                    Matches.Add(new Match(name1, name2));
                 }
             }
 
@@ -239,7 +283,7 @@ namespace TennisMatch
 
             // Test MatchUp
             Console.WriteLine("Test MatchUp:");
-            List<(string, string)> Matches = Ut.MatchUp(AllNames[0], AllNames[1]);
+            List<Match> Matches = Ut.MatchUp(AllNames[0], AllNames[1]);
             Console.WriteLine("Matches: " + String.Join(", ", Matches));
             Console.WriteLine();
         }
