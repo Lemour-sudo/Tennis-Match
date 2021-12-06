@@ -152,7 +152,6 @@ namespace TennisMatch
                 
                 foreach (string line in File.ReadLines(filePath))
                 {  
-                    Console.WriteLine(line);
                     CSVRecord Record = ParseCSVLine(line);
                     if (Record.Gender == "f")
                     {
@@ -164,9 +163,6 @@ namespace TennisMatch
                     }
                 }
 
-                Console.WriteLine("\nFemales: " + String.Join(", ", Females));
-                Console.WriteLine("Males: " + String.Join(", ", Males));
-
                 return new List<HashSet<string>> {Females, Males};
             }
             catch (IOException e)
@@ -176,6 +172,21 @@ namespace TennisMatch
             }
 
             return new List<HashSet<string>>();
+        }
+        
+        public List<(string, string)> MatchUp(HashSet<string> nameList1, HashSet<string> nameList2)
+        {
+            List<(string, string)> Matches = new List<(string, string)>();
+
+            foreach (string name1 in nameList1)
+            {
+                foreach (string name2 in nameList2)
+                {
+                    Matches.Add((name1, name2));
+                }
+            }
+
+            return Matches;
         }
     }
 
@@ -208,9 +219,15 @@ namespace TennisMatch
             // string Str = "@abdc";
             // Console.WriteLine(Ut.IsAlphabetic(Str));
 
-            // Test
-            const string IOFolder = "io_folder/";
-            Ut.ReadCSV(IOFolder + "names.csv");
+            // // Test ReadCSV
+            // const string IOFolder = "io_folder/";
+            // List<HashSet<string>> AllNames = Ut.ReadCSV(IOFolder + "names.csv");
+            // Console.WriteLine("Females: " + String.Join(", ", AllNames[0]));
+            // Console.WriteLine("Males: " + String.Join(", ", AllNames[1]));
+
+            // // Test MatchUp
+            // List<(string, string)> Matches = Ut.MatchUp(AllNames[0], AllNames[1]);
+            // Console.WriteLine("Matches: " + String.Join(", ", Matches));
         }
     }
 }
