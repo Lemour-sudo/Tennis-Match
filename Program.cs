@@ -17,7 +17,7 @@ namespace TennisMatch
         }
     }
 
-    class Match
+    class Match : IComparable
     {
         public static string MidStr { get; set; }
         public string Name1 { get; set; }
@@ -58,6 +58,18 @@ namespace TennisMatch
                 "({0}, {1}, {2})", 
                 Name1, Name2, Score
             );
+        }
+    
+        int IComparable.CompareTo(object obj)
+        {
+            Match Other = (Match) obj;
+            if (this.Score == Other.Score)
+            {
+                return String.Compare(
+                    this.GetMatchString(), Other.GetMatchString()
+                );
+            }
+            return (this.Score < Other.Score) ? 1: -1;
         }
     }
 
@@ -301,6 +313,30 @@ namespace TennisMatch
             // Test TestC = new Test();
             // TestC.RunLocalTests();
 
+            const string IOFolder = "io_folder/";
+            const string InpFileName = IOFolder + "names_1.csv";
+            const string OutFileName = IOFolder + "output_2.txt";
+
+            // Read Females and Males sets from csv file
+            List<HashSet<string>> AllNames = Ut.ReadCSV(InpFileName);
+
+            // Match-up the Females and Males sets
+            List<Match> Matches = Ut.MatchUp(AllNames[0], AllNames[1]);
+
+            // Calculate and store each match's score
+            foreach (Match MatchObj in Matches)
+            {
+                List<int> Counts = Ut.CountChars(
+                    MatchObj.Name1, MatchObj.Name2, MidStr
+                );
+                MatchObj.Score = Ut.ReduceDigits(Counts);
+            }
+            Matches.Add(new Match("ace", "billy", 95));
+            Console.WriteLine("Matches: " + String.Join(", ", Matches));
+            
+            // Sort Matches
+            Matches.Sort();
+            Console.WriteLine("Matches: " + String.Join(", ", Matches));
         }
     }
 }
