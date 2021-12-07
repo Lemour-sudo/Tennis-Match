@@ -1,222 +1,53 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using HelperLibrary;
 
 namespace TennisMatch
 {
-    class Test
-    {
-        public void RunLocalTests()
-        {
-            const string MidStr = "matches";
-
-            Utility Ut = new Utility();
-
-            string Name1 = "mona";
-            string Name2 = "lisa";
-            Match MatchObj = new Match(Name1, Name2);
-
-            // Test CreateMatchString
-            Console.WriteLine("Test CreateMatchString:");
-            Console.WriteLine(MatchObj.GetMatchString());
-            Console.WriteLine();
-
-            // Test CountMatchChars
-            Console.WriteLine("Test CountMatchChars:");
-            List<int> CountsList = Utility.CountChars(MatchObj.GetMatchString());
-            Console.WriteLine("CountsList: " + String.Join(", ", CountsList));
-            Console.WriteLine();
-
-            // Test CountDigits
-            Console.WriteLine("Test CountDigits:");
-            Console.WriteLine(Utility.CountDigits(-100000000)); // expect 9
-            Console.WriteLine();
-
-            // Test ReduceDigits
-            Console.WriteLine("Test ReduceDigits:");
-            List<int> Counts = new List<int> {2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 2};
-            Console.WriteLine(Utility.ReduceDigits(Counts)); // expect: 60
-            Console.WriteLine();
-
-            // Test IsAlphabetic
-            Console.WriteLine("Test IsAlphabetic:");
-            string Str = "@abdc";
-            Console.WriteLine(Utility.IsAlphabetic(Str));
-            Console.WriteLine();
-
-            // // Test ReadCSV
-            // Console.WriteLine("Test ReadCSV:");
-            // const string IOFolder = "io_folder/";
-            // CSVReader CReader = new CSVReader(IOFolder + "names.csv");
-            // List<HashSet<string>> AllNames = CReader.ReadCSV();
-            // Console.WriteLine("Females: " + String.Join(", ", AllNames[0]));
-            // Console.WriteLine("Males: " + String.Join(", ", AllNames[1]));
-            // Console.WriteLine();
-
-            // // Test MatchUp
-            // Console.WriteLine("Test MatchUp:");
-            // List<string[]> Products = 
-            //     Utility.CrossStringLists(AllNames[0], AllNames[1]);
-            // Console.WriteLine("Matches: " + String.Join(", ", Products));
-            // Console.WriteLine();
-        }
-    }
-
     class Program
-    {
-        private static string IOFolder = "IOFolder/";
-        private static string InpFileName;
-        private static string OutFileName = "output.txt";
-        private static string LogsPath = "Logs/";
-        private static Logger LoggerObj;
-
-        private static string FetchUserInput()
-        {
-            string UserFileName = "";
-
-            Console.WriteLine("Please input a valid csv input file-name.");
-            Console.WriteLine("Make sure the csv file is available in the 'IOFolder' folder.");
-            Console.WriteLine("The file-name should end with: .csv");
-            Console.WriteLine("\n-------------------------------------------------------------");
-            Console.WriteLine("\nEnter file name below and hit Enter to continue:");
-
-            bool ValidInput = false;
-            while (!ValidInput)
-            {
-                UserFileName = Console.ReadLine();
-
-                // Check if input is at least 5 characters long
-                if (UserFileName.Length < 5)
-                {
-                    Console.WriteLine(String.Format(
-                        "\nYou entered: '{0}', but a valid file-name should be at least 5 characters long, ending with: .csv",
-                        UserFileName
-                    ));
-                    Console.WriteLine("\n-------------------------------------------------------------");
-                    Console.WriteLine("\nPlease enter a valid file-name and press Enter to continue (Or press Ctr-C to quit):");
-                    continue;
-                }
-
-                // Check if input ends with .csv
-                if (UserFileName.Substring(UserFileName.Length - 4) != ".csv")
-                {
-                    Console.WriteLine(
-                        "\nYou entered: '{0}', but a file-name ending with '.csv' is expected.",
-                        UserFileName
-                    );
-                    Console.WriteLine("\n-------------------------------------------------------------");
-                    Console.WriteLine("\nPlease enter a valid file-name and press Enter to continue (Or press Ctr-C to quit):");
-                    continue;
-                }
-
-                // Check if file exists
-                if (File.Exists(IOFolder + UserFileName))
-                {
-                    ValidInput = true;
-                }
-                else if (File.Exists("../" + IOFolder + UserFileName))
-                {
-                    IOFolder = "../" + IOFolder;
-                    ValidInput = true;
-                }
-                else
-                {
-                    Console.WriteLine(String.Format(
-                        "\n'{0}' does not exist in '{1}'",
-                        UserFileName, IOFolder
-                    ));
-                    Console.WriteLine("\n-------------------------------------------------------------");
-                    Console.WriteLine(String.Format(
-                        "\nPlease enter an existing csv file in '{0}' and press Enter to continue (Or press Ctr-C to quit):",
-                        IOFolder
-                    ));
-                }
-
-            }
-
-            Console.WriteLine(String.Format(
-                "\n'{0}' found in '{1}'!",
-                UserFileName, IOFolder
-            ));
-            Console.WriteLine("\nProceeding to the next step ...");
-            Console.WriteLine("\n-------------------------------------------------------------");
-
-            InpFileName = UserFileName;
-
-            return UserFileName;
-        }
-
-        private static void StartLogger()
-        {
-            LoggerObj = new Logger(LogsPath);
-        }
-        
+    {   
         static void Main(string[] args)
         {
             Console.WriteLine("\nWelcome to Players-MatchUp!");
             Console.WriteLine("===========================\n");
 
-            // const string MidStr = "matches";
-            // const int MinGoodScore = 80;     // Minimum good match score
-
-            // // Run local tests
-            // Test TestC = new Test();
-            // TestC.RunLocalTests();
-
-            FetchUserInput();
-
-            // Start logger
-            StartLogger();
-
-            CSVReader CReader = new CSVReader(IOFolder + InpFileName);
-
-            // Read Females and Males sets from csv file
-            List<HashSet<string>> AllNames = CReader.ReadCSV(LoggerObj);
-
-            // Cross-product the Females and Males sets
-            List<string[]> Products = 
-                Utility.CrossStringLists(AllNames[0], AllNames[1]);
-
-            // Create and store matches along with their scores
-            List<Match> Matches = new List<Match>();
-            foreach (string[] Product in Products)
+            if (ChooseProgram() == "good-match")
             {
-                Match MatchObj = new Match(Product[0], Product[1]);
-
-                List<int> Counts = Utility.CountChars(
-                    MatchObj.GetMatchString()
-                );
-
-                MatchObj.Score = Utility.ReduceDigits(Counts);
-
-                Matches.Add(MatchObj);
+                GoodMatch.Run();
             }
-            
-            // Sort Matches
-            Matches.Sort();
-
-            // Save Match Results to text file
-            List<string> MatchResults = new List<string>();
-            foreach (Match MatchObj in Matches)
+            else
             {
-                MatchResults.Add(MatchObj.GetFinalMatchString());
+                GoodMatchCSV.Run();
             }
-            Utility.SaveListToFile(
-                IOFolder+OutFileName, MatchResults, LoggerObj
-            );
-            LoggerObj.WriteLineToLog(
-                String.Format("Output written successfully: {0}", IOFolder+OutFileName),
-                LogType.Info
-            );
-            Console.WriteLine(
-                String.Format("\nOutput written successfully to file: {0}", IOFolder+OutFileName)
-            );
 
-            LoggerObj.WriteLineToLog(
-                "Program finsished successfully.", LogType.Info
-            );
-            Console.WriteLine("\nProgram finsished successfully.\n");
+            Console.WriteLine("\n\nProgram complete! May the Game be with You ;)\n");
+        }
+
+        private static string ChooseProgram()
+        {
+            Console.WriteLine("\nFor a simple Good-Match between two stings, type 1 and hit Enter.");
+            Console.WriteLine("For Good-Match on a CSV file, type 2 and hit Enter.");
+            Console.WriteLine("\n-------------------------------------------------------------");
+
+            Console.WriteLine("\nEnter 1 or 2 to select a program:");
+            while (true)
+            {
+                string InputChoice = Console.ReadLine();
+
+                if (InputChoice == "1")
+                {
+                    Console.WriteLine("\nGood! You chose a simple Good-Match on two strings.");
+                    Console.WriteLine("\n-------------------------------------------------------------");
+                    return "good-match";
+                }
+                else if (InputChoice == "2")
+                {
+                    Console.WriteLine("\nGreat! You chose Good-Match on CSV.");
+                    Console.WriteLine("\n-------------------------------------------------------------");
+                    return "good-match-csv";
+                }
+
+                Console.WriteLine("\nInvalid input entered. Please enter either 1 or 2. (or hit Ctr-C to quit):");
+            }
+
         }
     }
 }
