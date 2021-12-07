@@ -45,21 +45,21 @@ namespace TennisMatch
             Console.WriteLine(Utility.IsAlphabetic(Str));
             Console.WriteLine();
 
-            // Test ReadCSV
-            Console.WriteLine("Test ReadCSV:");
-            const string IOFolder = "io_folder/";
-            CSVReader CReader = new CSVReader(IOFolder + "names.csv");
-            List<HashSet<string>> AllNames = CReader.ReadCSV();
-            Console.WriteLine("Females: " + String.Join(", ", AllNames[0]));
-            Console.WriteLine("Males: " + String.Join(", ", AllNames[1]));
-            Console.WriteLine();
+            // // Test ReadCSV
+            // Console.WriteLine("Test ReadCSV:");
+            // const string IOFolder = "io_folder/";
+            // CSVReader CReader = new CSVReader(IOFolder + "names.csv");
+            // List<HashSet<string>> AllNames = CReader.ReadCSV();
+            // Console.WriteLine("Females: " + String.Join(", ", AllNames[0]));
+            // Console.WriteLine("Males: " + String.Join(", ", AllNames[1]));
+            // Console.WriteLine();
 
-            // Test MatchUp
-            Console.WriteLine("Test MatchUp:");
-            List<string[]> Products = 
-                Utility.CrossStringLists(AllNames[0], AllNames[1]);
-            Console.WriteLine("Matches: " + String.Join(", ", Products));
-            Console.WriteLine();
+            // // Test MatchUp
+            // Console.WriteLine("Test MatchUp:");
+            // List<string[]> Products = 
+            //     Utility.CrossStringLists(AllNames[0], AllNames[1]);
+            // Console.WriteLine("Matches: " + String.Join(", ", Products));
+            // Console.WriteLine();
         }
     }
 
@@ -68,6 +68,8 @@ namespace TennisMatch
         private static string IOFolder = "IOFolder/";
         private static string InpFileName;
         private static string OutFileName = "output.txt";
+        private static string LogsPath = "Logs/";
+        private static Logger LoggerObj;
 
         private static string FetchUserInput()
         {
@@ -122,14 +124,19 @@ namespace TennisMatch
             }
 
             Console.WriteLine($"\n'{UserFileName}' found in '{IOFolder}'!");
-            Console.WriteLine("\nProceeding to the next step...");
-            Console.WriteLine("\n-------------------------------------------------------------\n");
+            Console.WriteLine("\nProceeding to the next step ...");
+            Console.WriteLine("\n-------------------------------------------------------------");
 
             InpFileName = UserFileName;
 
             return UserFileName;
         }
 
+        private static void StartLogger()
+        {
+            LoggerObj = new Logger(LogsPath);
+        }
+        
         static void Main(string[] args)
         {
             Console.WriteLine("\nWelcome to Players-MatchUp!");
@@ -144,10 +151,13 @@ namespace TennisMatch
 
             FetchUserInput();
 
+            // Start logger
+            StartLogger();
+
             CSVReader CReader = new CSVReader(IOFolder + InpFileName);
 
             // Read Females and Males sets from csv file
-            List<HashSet<string>> AllNames = CReader.ReadCSV();
+            List<HashSet<string>> AllNames = CReader.ReadCSV(LoggerObj);
 
             // Cross-product the Females and Males sets
             List<string[]> Products = 
@@ -177,7 +187,21 @@ namespace TennisMatch
             {
                 MatchResults.Add(MatchObj.GetFinalMatchString());
             }
-            Utility.SaveListToFile(IOFolder+OutFileName, MatchResults);
+            Utility.SaveListToFile(
+                IOFolder+OutFileName, MatchResults, LoggerObj
+            );
+            LoggerObj.WriteLineToLog(
+                String.Format("Output written successfully: {0}", IOFolder+OutFileName),
+                LogType.Info
+            );
+            Console.WriteLine(
+                String.Format("\nOutput written successfully to file: {0}", IOFolder+OutFileName)
+            );
+
+            LoggerObj.WriteLineToLog(
+                "Program finsished successfully.", LogType.Info
+            );
+            Console.WriteLine("\nProgram finsished successfully.\n");
         }
     }
 }

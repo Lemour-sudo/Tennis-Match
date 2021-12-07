@@ -32,53 +32,77 @@ namespace HelperLibrary
             string[] Words = line.Split(Delimiter);
             if (Words.Length != 2)
             {
-                Console.WriteLine("Invalid line");
+                throw new InvalidDataException(
+                    "Invalid CSV line entered. Line does not follow the required format: name, gender(f/m)"
+                );
             }
             
             // Check name
             string Name = Words[0].Trim().ToLower();
             if (!Utility.IsAlphabetic(Name))
             {
-                Console.WriteLine("Name not alphabetic");
+                throw new InvalidDataException(
+                    "Invalid name entered. Name must only contain alphabetic characters."
+                );
             }
 
             // Check gender
             string Gender = Words[1].Trim().ToLower();
             if (!((Gender == "f") || (Gender == "m")))
             {
-                Console.WriteLine("Gender is invalid");
+                throw new InvalidDataException(
+                    "Invalid gender entered. Gender expected to be: f or m"
+                );
             }
 
             return new CSVRecord(Name, Gender);
 
         }
 
-        public List<HashSet<string>> ReadCSV()
+        public List<HashSet<string>> ReadCSV(Logger LoggerObj)
         {
             HashSet<string> Females = new HashSet<string>();
             HashSet<string> Males = new HashSet<string>();
             try
             {
-                
+                int LineNumber = 1;
                 foreach (string line in File.ReadLines(FilePath))
-                {  
-                    CSVRecord Record = ParseCSVLine(line);
-                    if (Record.Gender == "f")
+                {
+                    try  
                     {
-                        Females.Add(Record.Name);
+                        CSVRecord Record = ParseCSVLine(line);
+                        if (Record.Gender == "f")
+                        {
+                            Females.Add(Record.Name);
+                        }
+                        else
+                        {
+                            Males.Add(Record.Name);
+                        }
                     }
-                    else
+                    catch (InvalidDataException e)
                     {
-                        Males.Add(Record.Name);
+                        string Message = String.Format(
+                            "At line {0} in csv file: {1}",
+                            LineNumber, e.Message
+                        );
+                        LoggerObj.WriteLineToLog(Message, LogType.Warning);
                     }
+
+                    LineNumber++;
                 }
 
                 return new List<HashSet<string>> {Females, Males};
             }
             catch (IOException e)
             {
-                Console.WriteLine("The file could not be read:");
-                Console.WriteLine(e.Message);
+                string Message = "Reading input file failed:" + e.Message;
+                LoggerObj.WriteLineToLog(
+                    Message, LogType.Fatal
+                );
+                Console.WriteLine(Message);
+                Console.WriteLine("\nProgram terminating.");
+                Environment.Exit(0);
             }
 
             return new List<HashSet<string>>();

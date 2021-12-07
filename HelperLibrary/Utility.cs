@@ -111,14 +111,27 @@ namespace HelperLibrary
             return Products;
         }
     
-        public static void SaveListToFile(string filename, List<string> itemList)
+        public static void SaveListToFile(string filename, List<string> itemList, Logger LoggerObj)
         {
-            using(TextWriter tw = new StreamWriter(filename))
+            try
             {
-                foreach (string item in itemList)
+                using(TextWriter tw = new StreamWriter(filename))
                 {
-                    tw.WriteLine(item.ToString());
+                    foreach (string item in itemList)
+                    {
+                        tw.WriteLine(item.ToString());
+                    }
                 }
+            }
+            catch (Exception e)
+            {
+                string Message = "Failed to write output file:" + e.Message;
+                LoggerObj.WriteLineToLog(
+                    Message, LogType.Fatal
+                );
+                Console.WriteLine(Message);
+                Console.WriteLine("\nProgram terminating.");
+                Environment.Exit(0);
             }
         }
     }
