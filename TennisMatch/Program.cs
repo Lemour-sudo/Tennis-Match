@@ -89,7 +89,10 @@ namespace TennisMatch
                 // Check if input is at least 5 characters long
                 if (UserFileName.Length < 5)
                 {
-                    Console.WriteLine($"\nYou entered: '{UserFileName}', but a valid file-name should be at least 5 characters long, ending with: .csv");
+                    Console.WriteLine(String.Format(
+                        "\nYou entered: '{0}', but a valid file-name should be at least 5 characters long, ending with: .csv",
+                        UserFileName
+                    ));
                     Console.WriteLine("\n-------------------------------------------------------------");
                     Console.WriteLine("\nPlease enter a valid file-name and press Enter to continue (Or press Ctr-C to quit):");
                     continue;
@@ -98,7 +101,10 @@ namespace TennisMatch
                 // Check if input ends with .csv
                 if (UserFileName.Substring(UserFileName.Length - 4) != ".csv")
                 {
-                    Console.WriteLine($"\nYou entered: '{UserFileName}', but a file-name ending with '.csv' is expected.");
+                    Console.WriteLine(
+                        "\nYou entered: '{0}', but a file-name ending with '.csv' is expected.",
+                        UserFileName
+                    );
                     Console.WriteLine("\n-------------------------------------------------------------");
                     Console.WriteLine("\nPlease enter a valid file-name and press Enter to continue (Or press Ctr-C to quit):");
                     continue;
@@ -116,14 +122,23 @@ namespace TennisMatch
                 }
                 else
                 {
-                    Console.WriteLine($"\n'{UserFileName}' does not exist in '{IOFolder}'");
+                    Console.WriteLine(String.Format(
+                        "\n'{0}' does not exist in '{1}'",
+                        UserFileName, IOFolder
+                    ));
                     Console.WriteLine("\n-------------------------------------------------------------");
-                    Console.WriteLine($"\nPlease enter an existing csv file in '{IOFolder}' and press Enter to continue (Or press Ctr-C to quit):");
+                    Console.WriteLine(String.Format(
+                        "\nPlease enter an existing csv file in '{0}' and press Enter to continue (Or press Ctr-C to quit):",
+                        IOFolder
+                    ));
                 }
 
             }
 
-            Console.WriteLine($"\n'{UserFileName}' found in '{IOFolder}'!");
+            Console.WriteLine(String.Format(
+                "\n'{0}' found in '{1}'!",
+                UserFileName, IOFolder
+            ));
             Console.WriteLine("\nProceeding to the next step ...");
             Console.WriteLine("\n-------------------------------------------------------------");
 
