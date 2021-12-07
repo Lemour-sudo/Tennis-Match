@@ -26,7 +26,10 @@ namespace HelperLibrary
 
         public string GetFinalMatchString()
         {
-            string Result = $"{Name1} {MidStr} {Name2} {Score}%";
+            string Result = String.Format(
+                "{0} {1} {2} {3}%",
+                Name1, MidStr, Name2, Score
+            );
             if (Score >= MinGoodScore)
             {
                 Result += ", good match";
