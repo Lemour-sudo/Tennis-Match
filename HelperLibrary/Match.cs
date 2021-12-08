@@ -4,19 +4,17 @@ namespace HelperLibrary
 {
     public class Match : IComparable
     {
-        public static string MidStr { get; set; }
+        public static string MidStr = "matches"; // used for connecting two names
+        public static int MinGoodScore = 60;
         public string Name1 { get; set; }
         public string Name2 { get; set; }
         public int Score { get; set; }
-        public int MinGoodScore { get; set; }
 
         public Match(string name1, string name2, int score=0)
         {
             Name1 = name1.ToLower().Trim();
             Name2 = name2.ToLower().Trim();
             Score = score;
-            MidStr = "matches";
-            MinGoodScore = 80;
         }
 
         public string GetMatchString()
