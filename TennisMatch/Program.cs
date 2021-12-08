@@ -1,4 +1,5 @@
 ﻿using System;
+using HelperLibrary;
 
 namespace TennisMatch
 {
@@ -8,6 +9,8 @@ namespace TennisMatch
         {
             Console.WriteLine("\nWelcome to Players-MatchUp!");
             Console.WriteLine("===========================\n");
+
+            SetUpMainVars();
 
             if (ChooseProgram() == "good-match")
             {
@@ -19,6 +22,13 @@ namespace TennisMatch
             }
 
             Console.WriteLine("\n\nProgram complete! May the Game be with You ;)\n");
+        }
+
+        private static void SetUpMainVars()
+        {
+            // Setup Match static variables
+            Match.MidStr = "matches";
+            Match.MinGoodScore = 80;
         }
 
         private static string ChooseProgram()
