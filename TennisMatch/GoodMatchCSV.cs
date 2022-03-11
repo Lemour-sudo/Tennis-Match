@@ -7,11 +7,11 @@ namespace TennisMatch
 {
     class GoodMatchCSV
     {
-        private static string IOFolder = "IOFolder/";
-        private static string InpFileName;
-        private static string OutFileName = "output.txt";
-        private static string LogsPath = "Logs/";
-        private static Logger LoggerObj;
+        private static string ioFolder = "IOFolder/";
+        private static string inpFileName;
+        private static string outFileName = "output.txt";
+        private static string logsPath = "Logs/";
+        private static Logger loggerObj;
 
         public static void Run()
         {
@@ -21,23 +21,23 @@ namespace TennisMatch
             StartLogger();
 
             // Fetch Females and Males sets from csv file
-            CSVReader CReader = new CSVReader(IOFolder + InpFileName);
-            List<HashSet<string>> AllNames = CReader.ReadCSV(LoggerObj);
+            CSVReader cReader = new CSVReader(ioFolder + inpFileName);
+            List<HashSet<string>> allNames = cReader.ReadCSV(loggerObj);
 
             // Get matches data from females and males sets
-            List<Match> Matches = GetMatches(AllNames);
+            List<Match> matches = GetMatches(allNames);
             
             // Count and present stats: number of females and males and matches
-            ReportStats(AllNames, Matches);
+            ReportStats(allNames, matches);
 
-            // Sort Matches
-            Matches.Sort();
+            // Sort matches
+            matches.Sort();
 
-            // Save Match Results to text file
-            SaveMatches(Matches);
+            // Save match Results to text file
+            SaveMatches(matches);
 
             // Conclude Program
-            LoggerObj.WriteLineToLog(
+            loggerObj.WriteLineToLog(
                 "Program finsished successfully.", LogType.Info
             );
             Console.WriteLine("\nPlease checkout the 'Logs/' folder for any warnings and info.");
@@ -45,7 +45,7 @@ namespace TennisMatch
 
         private static string FetchUserInput()
         {
-            string UserFileName = "";
+            string userFileName = "";
 
             Console.WriteLine("\nPlease input a valid csv input file-name.");
             Console.WriteLine("Make sure the csv file is available in the 'IOFolder' folder.");
@@ -53,17 +53,17 @@ namespace TennisMatch
             Console.WriteLine("\n-------------------------------------------------------------");
             Console.WriteLine("\nEnter file name below and hit Enter to continue:");
 
-            bool ValidInput = false;
-            while (!ValidInput)
+            bool validInput = false;
+            while (!validInput)
             {
-                UserFileName = Console.ReadLine();
+                userFileName = Console.ReadLine();
 
                 // Check if input is at least 5 characters long
-                if (UserFileName.Length < 5)
+                if (userFileName.Length < 5)
                 {
                     Console.WriteLine(String.Format(
                         "\nYou entered: '{0}', but a valid file-name should be at least 5 characters long, ending with: .csv",
-                        UserFileName
+                        userFileName
                     ));
                     Console.WriteLine("\n-------------------------------------------------------------");
                     Console.WriteLine("\nPlease enter a valid file-name and press Enter to continue (Or press Ctr-C to quit):");
@@ -71,11 +71,11 @@ namespace TennisMatch
                 }
 
                 // Check if input ends with .csv
-                if (UserFileName.Substring(UserFileName.Length - 4) != ".csv")
+                if (userFileName.Substring(userFileName.Length - 4) != ".csv")
                 {
                     Console.WriteLine(
                         "\nYou entered: '{0}', but a file-name ending with '.csv' is expected.",
-                        UserFileName
+                        userFileName
                     );
                     Console.WriteLine("\n-------------------------------------------------------------");
                     Console.WriteLine("\nPlease enter a valid file-name and press Enter to continue (Or press Ctr-C to quit):");
@@ -83,25 +83,25 @@ namespace TennisMatch
                 }
 
                 // Check if file exists
-                if (File.Exists(IOFolder + UserFileName))
+                if (File.Exists(ioFolder + userFileName))
                 {
-                    ValidInput = true;
+                    validInput = true;
                 }
-                else if (File.Exists("../" + IOFolder + UserFileName))
+                else if (File.Exists("../" + ioFolder + userFileName))
                 {
-                    IOFolder = "../" + IOFolder;
-                    ValidInput = true;
+                    ioFolder = "../" + ioFolder;
+                    validInput = true;
                 }
                 else
                 {
                     Console.WriteLine(String.Format(
                         "\n'{0}' does not exist in '{1}'",
-                        UserFileName, IOFolder
+                        userFileName, ioFolder
                     ));
                     Console.WriteLine("\n-------------------------------------------------------------");
                     Console.WriteLine(String.Format(
                         "\nPlease enter an existing csv file in '{0}' and press Enter to continue (Or press Ctr-C to quit):",
-                        IOFolder
+                        ioFolder
                     ));
                 }
 
@@ -109,43 +109,43 @@ namespace TennisMatch
 
             Console.WriteLine(String.Format(
                 "\n'{0}' found in '{1}'!",
-                UserFileName, IOFolder
+                userFileName, ioFolder
             ));
             Console.WriteLine("\nProceeding to the next step ...");
             Console.WriteLine("\n-------------------------------------------------------------");
 
-            InpFileName = UserFileName;
+            inpFileName = userFileName;
 
-            return UserFileName;
+            return userFileName;
         }
 
         private static void StartLogger()
         {
-            LoggerObj = new Logger(LogsPath);
+            loggerObj = new Logger(logsPath);
         }
 
-        private static List<Match> GetMatches(List<HashSet<string>> AllNames)
+        private static List<Match> GetMatches(List<HashSet<string>> allNames)
         {
-            // Cross-product the Females and Males sets
-            List<string[]> Products = 
-                Utility.CrossStringLists(AllNames[0], AllNames[1]);
+            // Cross-product the females and males sets
+            List<string[]> products = 
+                Utility.CrossStringLists(allNames[0], allNames[1]);
 
             // Create and store matches along with their scores
-            List<Match> Matches = new List<Match>();
-            foreach (string[] Product in Products)
+            List<Match> matches = new List<Match>();
+            foreach (string[] product in products)
             {
-                Match MatchObj = new Match(Product[0], Product[1]);
+                Match matchObj = new Match(product[0], product[1]);
 
-                List<int> Counts = Utility.CountChars(
-                    MatchObj.GetMatchString()
+                List<int> counts = Utility.CountChars(
+                    matchObj.GetMatchString()
                 );
 
-                MatchObj.Score = Utility.ReduceDigits(Counts);
+                matchObj.Score = Utility.ReduceDigits(counts);
 
-                Matches.Add(MatchObj);
+                matches.Add(matchObj);
             }
 
-            return Matches;
+            return matches;
         }
 
         private static void ReportStats(List<HashSet<string>> allNames, List<Match> matches)
@@ -158,24 +158,24 @@ namespace TennisMatch
 
         private static void SaveMatches(List<Match> matches)
         {
-            List<string> MatchResults = new List<string>();
+            List<string> matchResults = new List<string>();
 
-            foreach (Match MatchObj in matches)
+            foreach (Match matchObj in matches)
             {
-                MatchResults.Add(MatchObj.GetFinalMatchString());
+                matchResults.Add(matchObj.GetFinalMatchString());
             }
 
             Utility.SaveListToFile(
-                IOFolder+OutFileName, MatchResults, LoggerObj
+                ioFolder+outFileName, matchResults, loggerObj
             );
 
-            LoggerObj.WriteLineToLog(
-                String.Format("Output written successfully: {0}", IOFolder+OutFileName),
+            loggerObj.WriteLineToLog(
+                String.Format("Output written successfully: {0}", ioFolder+outFileName),
                 LogType.Info
             );
 
             Console.WriteLine(
-                String.Format("\nOutput written successfully to file: {0}", IOFolder+OutFileName)
+                String.Format("\nOutput written successfully to file: {0}", ioFolder+outFileName)
             );
         }
     }
