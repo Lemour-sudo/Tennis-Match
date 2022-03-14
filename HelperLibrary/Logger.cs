@@ -28,13 +28,13 @@ namespace HelperLibrary
 
         private void CreateFullPath(string pathFolder)
         {
-            DateTime Now = DateTime.Now;
-            string Indentifier = String.Format(
+            DateTime now = DateTime.Now;
+            string indentifier = String.Format(
                 "applog_{0}-{1:00}-{2:00}_{3:00}-{4:00}-{5:00}",
-                Now.Year, Now.Month, Now.Day, 
-                Now.Hour, Now.Minute, Now.Second
+                now.Year, now.Month, now.Day, 
+                now.Hour, now.Minute, now.Second
             );
-            FullPath = pathFolder + Indentifier + ".log";
+            FullPath = pathFolder + indentifier + ".log";
         }
 
         private void CreateFile()
@@ -45,17 +45,17 @@ namespace HelperLibrary
             {
                 using (TextWriter tw = new StreamWriter(File.Open(FullPath, FileMode.CreateNew)))
                 {
-                    DateTime Now = DateTime.Now;
-                    string TimeStamp = String.Format(
+                    DateTime now = DateTime.Now;
+                    string timeStamp = String.Format(
                         "{0:00}:{1:00}:{2:00}",
-                        Now.Hour, Now.Minute, Now.Second
+                        now.Hour, now.Minute, now.Second
                     );
                     tw.WriteLine("You may find these logs helpful ;)");
                     tw.WriteLine("==================================");
                     tw.WriteLine();
                     tw.WriteLine(String.Format(
                         "{0}  [{1}]  Program started.", 
-                        TimeStamp, LogType.Info
+                        timeStamp, LogType.Info
                     ));
                     tw.Close();
                     tw.Dispose();
@@ -78,28 +78,28 @@ namespace HelperLibrary
                 return;
             }
 
-            DateTime Now = DateTime.Now;
-            string TimeStamp = String.Format(
+            DateTime now = DateTime.Now;
+            string timeStamp = String.Format(
                 "{0:00}:{1:00}:{2:00}",
-                Now.Hour, Now.Minute, Now.Second
+                now.Hour, now.Minute, now.Second
             );
 
-            string LogMsg = String.Format(
+            string logMsg = String.Format(
                 "{0}  [{1}]  {2}",
-                TimeStamp, type, message
+                timeStamp, type, message
             );
 
             try
             {
                 using(TextWriter tw = new StreamWriter(File.Open(FullPath, FileMode.Append)))
                 {
-                    tw.WriteLine(LogMsg);
+                    tw.WriteLine(logMsg);
                     
                     if (type == "FATAL")
                     {
                         tw.WriteLine(String.Format(
                             "{0}  [{1}]  Program terminated due to Fatal Error.", 
-                            TimeStamp, LogType.Fatal
+                            timeStamp, LogType.Fatal
                         ));
                     }
 
