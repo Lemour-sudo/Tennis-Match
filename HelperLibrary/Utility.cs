@@ -9,34 +9,34 @@ namespace HelperLibrary
     {
         public static List<int> CountChars(string str)
         {
-            List<int> CountsList = new List<int>();
+            List<int> countsList = new List<int>();
 
-            Dictionary<char, int> CharsDict = 
+            Dictionary<char, int> charsDict = 
                 new Dictionary<char, int>();
             
             foreach (char c in str)
             {
-                if (CharsDict.ContainsKey(c))
+                if (charsDict.ContainsKey(c))
                 {
-                    CharsDict[c] += 1;
+                    charsDict[c] += 1;
                 }
                 else
                 {
-                    CharsDict.Add(c, 1);
+                    charsDict.Add(c, 1);
                 }
             }
 
-            HashSet<char> SeenChars = new HashSet<char>();
+            HashSet<char> seenChars = new HashSet<char>();
             foreach (char c in str)
             {
-                if (!SeenChars.Contains(c))
+                if (!seenChars.Contains(c))
                 {
-                    CountsList.Add(CharsDict[c]);
-                    SeenChars.Add(c);
+                    countsList.Add(charsDict[c]);
+                    seenChars.Add(c);
                 }
             }
 
-            return CountsList;
+            return countsList;
         }
 
         public static int CountDigits(int number)
@@ -50,36 +50,36 @@ namespace HelperLibrary
             {
                 int i = 0;
                 int j = counts.Count - 1;
-                List<int> NewCounts = new List<int>();
+                List<int> newCounts = new List<int>();
                 while (i <= j)
                 {
-                    int Num;
+                    int num;
                     // Add the leftmost and righmost numbers
                     if (i == j)
                     {
-                        Num = counts[i];
+                        num = counts[i];
                     }
                     else
                     {
-                        Num = counts[i] + counts[j];
+                        num = counts[i] + counts[j];
                     }
 
                     // Check if Num is a single- or 2-digit number
-                    if (CountDigits(Num) > 1)
+                    if (CountDigits(num) > 1)
                     {
-                        NewCounts.Add((int) (Num / 10));
-                        NewCounts.Add(Num % 10);
+                        newCounts.Add((int) (num / 10));
+                        newCounts.Add(num % 10);
                     }
                     else
                     {
-                        NewCounts.Add(Num);
+                        newCounts.Add(num);
                     }
 
                     i++;
                     j--;
                 }
 
-                counts = NewCounts;
+                counts = newCounts;
             }
 
             if (counts.Count == 2)
@@ -98,17 +98,17 @@ namespace HelperLibrary
         
         public static List<string[]> CrossStringLists(HashSet<string> nameList1, HashSet<string> nameList2)
         {
-            List<string[]> Products = new List<string[]>();
+            List<string[]> products = new List<string[]>();
 
             foreach (string name1 in nameList1)
             {
                 foreach (string name2 in nameList2)
                 {
-                    Products.Add(new string[] { name1, name2 });
+                    products.Add(new string[] { name1, name2 });
                 }
             }
 
-            return Products;
+            return products;
         }
     
         public static void SaveListToFile(string filename, List<string> itemList, Logger LoggerObj)
@@ -125,11 +125,11 @@ namespace HelperLibrary
             }
             catch (Exception e)
             {
-                string Message = "Failed to write output file:" + e.Message;
+                string message = "Failed to write output file:" + e.Message;
                 LoggerObj.WriteLineToLog(
-                    Message, LogType.Fatal
+                    message, LogType.Fatal
                 );
-                Console.WriteLine(Message);
+                Console.WriteLine(message);
                 Console.WriteLine("\nProgram terminating.");
                 Environment.Exit(0);
             }

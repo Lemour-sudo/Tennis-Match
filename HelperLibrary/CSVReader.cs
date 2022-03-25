@@ -29,8 +29,8 @@ namespace HelperLibrary
 
         public CSVRecord ParseCSVLine(string line)
         {
-            string[] Words = line.Split(Delimiter);
-            if (Words.Length != 2)
+            string[] words = line.Split(Delimiter);
+            if (words.Length != 2)
             {
                 throw new InvalidDataException(
                     "Invalid CSV line entered. Line does not follow the required format: name, gender(f/m)"
@@ -38,8 +38,8 @@ namespace HelperLibrary
             }
             
             // Check name
-            string Name = Words[0].Trim().ToLower();
-            if (!Utility.IsAlphabetic(Name))
+            string name = words[0].Trim().ToLower();
+            if (!Utility.IsAlphabetic(name))
             {
                 throw new InvalidDataException(
                     "Invalid name entered. Name must only contain alphabetic characters."
@@ -47,60 +47,60 @@ namespace HelperLibrary
             }
 
             // Check gender
-            string Gender = Words[1].Trim().ToLower();
-            if (!((Gender == "f") || (Gender == "m")))
+            string gender = words[1].Trim().ToLower();
+            if (!((gender == "f") || (gender == "m")))
             {
                 throw new InvalidDataException(
                     "Invalid gender entered. Gender expected to be: f or m"
                 );
             }
 
-            return new CSVRecord(Name, Gender);
+            return new CSVRecord(name, gender);
 
         }
 
-        public List<HashSet<string>> ReadCSV(Logger LoggerObj)
+        public List<HashSet<string>> ReadCSV(Logger loggerObj)
         {
-            HashSet<string> Females = new HashSet<string>();
-            HashSet<string> Males = new HashSet<string>();
+            HashSet<string> females = new HashSet<string>();
+            HashSet<string> males = new HashSet<string>();
             try
             {
-                int LineNumber = 1;
+                int lineNumber = 1;
                 foreach (string line in File.ReadLines(FilePath))
                 {
                     try  
                     {
-                        CSVRecord Record = ParseCSVLine(line);
-                        if (Record.Gender == "f")
+                        CSVRecord record = ParseCSVLine(line);
+                        if (record.Gender == "f")
                         {
-                            Females.Add(Record.Name);
+                            females.Add(record.Name);
                         }
                         else
                         {
-                            Males.Add(Record.Name);
+                            males.Add(record.Name);
                         }
                     }
                     catch (InvalidDataException e)
                     {
-                        string Message = String.Format(
+                        string message = String.Format(
                             "At line {0} in csv file: {1}",
-                            LineNumber, e.Message
+                            lineNumber, e.Message
                         );
-                        LoggerObj.WriteLineToLog(Message, LogType.Warning);
+                        loggerObj.WriteLineToLog(message, LogType.Warning);
                     }
 
-                    LineNumber++;
+                    lineNumber++;
                 }
 
-                return new List<HashSet<string>> {Females, Males};
+                return new List<HashSet<string>> {females, males};
             }
             catch (IOException e)
             {
-                string Message = "Reading input file failed:" + e.Message;
-                LoggerObj.WriteLineToLog(
-                    Message, LogType.Fatal
+                string message = "Reading input file failed:" + e.Message;
+                loggerObj.WriteLineToLog(
+                    message, LogType.Fatal
                 );
-                Console.WriteLine(Message);
+                Console.WriteLine(message);
                 Console.WriteLine("\nProgram terminating.");
                 Environment.Exit(0);
             }

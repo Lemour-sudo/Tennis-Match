@@ -24,16 +24,16 @@ namespace HelperLibrary
 
         public string GetFinalMatchString()
         {
-            string Result = String.Format(
+            string result = String.Format(
                 "{0} {1} {2} {3}%",
                 Name1, MidStr, Name2, Score
             );
             if (Score >= MinGoodScore)
             {
-                Result += ", good match";
+                result += ", good match";
             }
 
-            return Result;
+            return result;
         }
 
         public override string ToString()
@@ -43,14 +43,14 @@ namespace HelperLibrary
     
         int IComparable.CompareTo(object obj)
         {
-            Match Other = (Match) obj;
-            if (this.Score == Other.Score)
+            Match other = (Match) obj;
+            if (this.Score == other.Score)
             {
                 return String.Compare(
-                    this.GetMatchString(), Other.GetMatchString()
+                    this.GetMatchString(), other.GetMatchString()
                 );
             }
-            return (this.Score < Other.Score) ? 1: -1;
+            return (this.Score < other.Score) ? 1: -1;
         }
     }
 }
