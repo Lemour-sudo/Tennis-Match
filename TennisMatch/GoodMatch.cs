@@ -5,25 +5,25 @@ namespace TennisMatch
 {
     public class GoodMatch
     {
-        private static string Name1;
-        private static string Name2;
+        private static string name1;
+        private static string name2;
 
         public static void Run()
         {
             FetchUserInput();
 
-            Match MatchObj = new Match(Name1, Name2);
+            Match matchObj = new Match(name1, name2);
 
-            MatchObj.Score = ScoreMatch(MatchObj);
+            matchObj.Score = ScoreMatch(matchObj);
 
-            // Report Match score
+            // Report match score
             Console.WriteLine("\nHere's the match result:");
-            Console.WriteLine("\t" + MatchObj.GetFinalMatchString());
+            Console.WriteLine("\t" + matchObj.GetFinalMatchString());
         }
 
         private static void FetchUserInput()
         {
-            const string WarningMessage = 
+            const string warningMessage = 
                 "\nInvalid name entered.\nPlease enter a name that is strictly alphabetic. (Or press Ctr-C to quit):";
 
             Console.WriteLine("\nYou are prompted to enter two names to match.");
@@ -33,37 +33,37 @@ namespace TennisMatch
             Console.WriteLine("\nPlease enter the first name below:");
             while (true)
             {
-                string InputName = Console.ReadLine();
+                string inputName = Console.ReadLine();
 
-                if (Utility.IsAlphabetic(InputName))
+                if (Utility.IsAlphabetic(inputName))
                 {
-                    Name1 = InputName.ToLower();
+                    name1 = inputName.ToLower();
                     break;
                 }
 
-                Console.WriteLine(WarningMessage);
+                Console.WriteLine(warningMessage);
             }
 
             Console.WriteLine("\nPlease enter the second name below:");
             while (true)
             {
-                string InputName = Console.ReadLine();
+                string inputName = Console.ReadLine();
 
-                if (Utility.IsAlphabetic(InputName))
+                if (Utility.IsAlphabetic(inputName))
                 {
-                    Name2 = InputName.ToLower();
+                    name2 = inputName.ToLower();
                     break;
                 }
 
-                Console.WriteLine(WarningMessage);
+                Console.WriteLine(warningMessage);
             }
         }
     
-        private static int ScoreMatch(Match MatchObj)
+        private static int ScoreMatch(Match matchObj)
         {
             return Utility.ReduceDigits(
                 Utility.CountChars(
-                    MatchObj.GetMatchString()
+                    matchObj.GetMatchString()
                 )
             );
         }

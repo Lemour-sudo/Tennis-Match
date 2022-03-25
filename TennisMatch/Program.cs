@@ -40,15 +40,15 @@ namespace TennisMatch
             Console.WriteLine("\nEnter 1 or 2 to select a program:");
             while (true)
             {
-                string InputChoice = Console.ReadLine();
+                string inputChoice = Console.ReadLine();
 
-                if (InputChoice == "1")
+                if (inputChoice == "1")
                 {
                     Console.WriteLine("\nGood! You chose a simple Good-Match on two strings.");
                     Console.WriteLine("\n-------------------------------------------------------------");
                     return "good-match";
                 }
-                else if (InputChoice == "2")
+                else if (inputChoice == "2")
                 {
                     Console.WriteLine("\nGreat! You chose Good-Match on CSV.");
                     Console.WriteLine("\n-------------------------------------------------------------");
